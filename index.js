@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+var AsciiTable = require('ascii-table');
 
 
 const db = mysql.createConnection(
@@ -104,7 +105,8 @@ function askQuestion(questionSet) {
 
                  }
                  case 'View All Departments' : {
-                    queryDatabase('department', ['name', 'id']);
+                    // queryDatabase('department', ['name', 'id']);
+                    queryDatabase('department');
                     break;
                  }
 
@@ -113,15 +115,27 @@ function askQuestion(questionSet) {
         });
 }
 function queryDatabase (table, parameters) {
-    db.query(`SELECT * FROM ${table}`, function (err, results) {
+    db.query(`SELECT * FROM ${table}`, function (err, results, fields) {
         if(results) {
             // console.log(results);
-            results.forEach(function(result){
-                parameters.forEach(function(parameter){
-                    process.stdout.write(`${result[parameter]} `);
-                });
-                process.stdout.write('\n');
-          });
+            if (parameters) {
+                let ascii = new AsciiTable();
+                ascii.setHeading(parameters[0], parameters[1]);
+                for (let i of results) {
+                    ascii.addRow(i[parameters[0]], i[parameters[1]]);
+                }
+                console.log(ascii.toString());
+                console.log(results);
+                // results.forEach(function(result){
+                //     ascii.addRow(result)
+                    // parameters.forEach(function(parameter){
+                        // process.stdout.write(`${result[parameter]} `);
+                    // });
+                    // process.stdout.write('\n');
+                // });
+            } else {
+                console.log(results);
+            }
         }
     });
 }
