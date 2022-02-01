@@ -1,11 +1,6 @@
-const express = require('inquirer');
+const inquirer = require('inquirer');
 const mysql = require('mysql2');
 
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 const db = mysql.createConnection(
     {
@@ -16,19 +11,31 @@ const db = mysql.createConnection(
       database: 'employee_db'
     },
     console.log(`Connected to the employee_db database.`)
-  );
+);
+
+inquirer
+    .prompt([
+        {
+            type: 'list',
+            message: 'What would you like to do?',
+            name: 'whatToDo',
+            choices: [
+                    'View All Employees', 
+                    'Add Employee', 
+                    'Update Employee Role',
+                    'View All Roles',
+                    'Add Role',
+                    'View All Departments',
+                    'Add Department',
+                    'Quit'
+                    ]
+        },
 
 
-//   db.query('SELECT * FROM employees', function (err, results) {
-//     console.log(err);
-//     console.log(results);
-//   });
-  
-  app.use((req, res) => {
-    res.status(404).end();
-  });
-  
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-  
+    ]).then((response) => {
+        console.log(response);
+
+    });
+
+
+
