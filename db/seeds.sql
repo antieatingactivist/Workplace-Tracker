@@ -5,17 +5,17 @@ VALUES  (1, "Command"),
         (4, "Security"),
         (5, "Medical");
 
-INSERT INTO role (id, name)
-VALUES  (1, "Captain"),
-        (2, "First Officer"),
-        (3, "Head Engineer"),
-        (4, "Doctor"),
-        (5, "Transporter Operator");
+INSERT INTO role (id, title, salary, department_id)
+VALUES  (1, "Captain", 0.00, 1),
+        (2, "First Officer", 0.00, 1),
+        (3, "Head Engineer", 0.00, 3),
+        (4, "Doctor", 0.00, 5),
+        (5, "Transporter Operator", 0.00, 3);
 
-INSERT INTO employee (first_name, last_name, manager_id)
-VALUES ("Jean-luc", "Picard" , 1),
-       ("William", "Riker", 1),
-       ("Geordie", "LaForge", 2),
-       ("Beverly", "Crusher", 2),
-       ("Miles", "Obrien", 3);
+INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
+VALUES (1, "Jean-luc", "Picard" , 1,  NULL),
+       (2, "William", "Riker", 2, 1),
+       (3, "Geordie", "LaForge", 3, 1),
+       (4, "Beverly", "Crusher", 4, 1),
+       (5, "Miles", "Obrien", 5, 3);
        
