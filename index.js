@@ -5,7 +5,7 @@ var AsciiTable = require('ascii-table');
 
 const db = mysql.createConnection(
     {
-      host: '127.0.0.1',
+      host: 'localhost',
       user: 'root',
       port: 3306,
       password: 'password',
@@ -100,13 +100,19 @@ function askQuestion(questionSet) {
                     break;
                  }
                  case 'View All Employees' : {
-                    queryDatabase('employee', ['first_name', 'last_name']);
+                    // queryDatabase('employee', ['id', 'first_name', 'last_name', 'role_id']);
+                    queryDatabase('SELECT first_name, last_name FROM employee');
                     break;
 
                  }
                  case 'View All Departments' : {
                     // queryDatabase('department', ['name', 'id']);
-                    queryDatabase('department');
+                    queryDatabase('SELECT name, id FROM department');
+                    break;
+                 }
+                 case 'View All Roles' : {
+                    // queryDatabase('role', ['title', 'id', 'department_id', 'salary' ]);
+                    queryDatabase('SELECT title, id, department_id, salary FROM role');
                     break;
                  }
 
@@ -114,31 +120,28 @@ function askQuestion(questionSet) {
              }
         });
 }
-function queryDatabase (table, parameters) {
-    db.query(`SELECT * FROM ${table}`, function (err, results, fields) {
+function queryDatabase (command) {
+    db.query(command , function (err, results) {
         if(results) {
-            // console.log(results);
-            if (parameters) {
-                let ascii = new AsciiTable();
-                ascii.setHeading(parameters[0], parameters[1]);
-                for (let i of results) {
-                    ascii.addRow(i[parameters[0]], i[parameters[1]]);
-                }
-                console.log(ascii.toString());
-                console.log(results);
-                // results.forEach(function(result){
-                //     ascii.addRow(result)
-                    // parameters.forEach(function(parameter){
-                        // process.stdout.write(`${result[parameter]} `);
-                    // });
-                    // process.stdout.write('\n');
-                // });
-            } else {
-                console.log(results);
-            }
+                console.table(results);
+     
+                // let ascii = new AsciiTable();
+                // ascii.setHeading(...parameters);
+                // for (let i of results) {
+                //     let row = [];
+                //     for (let j of parameters) {
+                //         row.push(i[j]);
+                //     }
+                //     ascii.addRow(...row);
+                // }
+                // console.log(ascii.toString());
+         
         }
     });
 }
+
+
+//init
 askQuestion(questionSets.welcome);
 
 

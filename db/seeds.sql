@@ -13,9 +13,9 @@ VALUES  (1, "Captain", 0.00, 1),
         (5, "Transporter Operator", 0.00, 3);
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
-VALUES (1, "Jean-luc", "Picard" , 1,  NULL),
-       (2, "William", "Riker", 2, 1),
-       (3, "Geordie", "LaForge", 3, 1),
-       (4, "Beverly", "Crusher", 4, 1),
-       (5, "Miles", "Obrien", 5, 3);
+VALUES (1, "Jean-luc", "Picard", 2,  NULL),
+       (2, "William", "Riker", 3, 1),
+       (3, "Geordie", "LaForge", 4, 1),
+       (4, "Beverly", "Crusher", 5, 1),
+       (5, "Miles", "Obrien", 1, 3);
        
