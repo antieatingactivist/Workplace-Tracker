@@ -14,6 +14,7 @@ const db = mysql.createConnection(
     console.log(`Connected to the employee_db database.`)
 );
 
+var departmentList = [];
 const questionSets = {
     continue: [
         {
@@ -56,9 +57,12 @@ const questionSets = {
             message: 'Please enter the salary of this role.',
             name : 'salary'
         },{
-            type : 'input',
+            type: 'list',
             message: 'Which department is this role located in?',
-            name : 'department'
+            name: 'department',
+            choices: departmentList
+                
+            
         }
     ],
     addEmployee : [
@@ -96,6 +100,15 @@ function askQuestion(questionSet) {
              else if (response.firstName) {
                  console.debug('name entered');
                  queryDatabase(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${response.role}",  "${response.manager}")`);
+             }
+             else if (response.roleName) {
+                console.debug('role entered');
+                console.log(response.department);
+                db.query(`SELECT department_id FROM role WHERE role.title = ?`, response.department, function (err, results) {
+                    const departmentId = results[0].department_id;
+                    queryDatabase(`INSERT INTO role (title, salary, department_id) VALUES ("${response.roleName}", ${response.salary}, ${departmentId})`);
+                });
+                
              }
              else if (response.whatToDo) {
                 switch (response.whatToDo) {
@@ -138,6 +151,8 @@ function queryDatabase (command) {
         if(results) {
 
             console.table(results);
+            // console.log(results);
+
             askQuestion(questionSets.continue);
      
                 // let ascii = new AsciiTable();
@@ -158,6 +173,14 @@ function queryDatabase (command) {
 
 
 //init
+db.query('SELECT title FROM role', function (err, results) {
+    // console.log(results);
+    // departmentList = [];
+    for (let i of results) {
+        departmentList.push(i.title);
+    }
+    console.log(departmentList);
+});
 askQuestion(questionSets.welcome);
 
 
