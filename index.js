@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-var AsciiTable = require('ascii-table');
+// var AsciiTable = require('ascii-table');
 
 
 const db = mysql.createConnection(
@@ -15,6 +15,13 @@ const db = mysql.createConnection(
 );
 
 const questionSets = {
+    continue: [
+        {
+            name: "continue",
+            type: "confirm",
+            message: "Continue?",
+        }
+    ],
     welcome : [
         {
             type: 'list',
@@ -78,11 +85,14 @@ const questionSets = {
 
 
 function askQuestion(questionSet) {
-
+    console.log('\n');
     inquirer
         .prompt(questionSet)
         .then((response) => {
-            console.log(response);
+            // console.log(response);
+             if (response.continue) {   
+                askQuestion(questionSets.welcome);  
+             }
              switch (response.whatToDo) {
                  case 'Quit' : {
                     process.exit();
@@ -102,6 +112,7 @@ function askQuestion(questionSet) {
                  case 'View All Employees' : {
                     // queryDatabase('employee', ['id', 'first_name', 'last_name', 'role_id']);
                     queryDatabase('SELECT first_name, last_name FROM employee');
+                    
                     break;
 
                  }
@@ -123,7 +134,8 @@ function askQuestion(questionSet) {
 function queryDatabase (command) {
     db.query(command , function (err, results) {
         if(results) {
-                console.table(results);
+            console.table(results);
+            askQuestion(questionSets.continue);
      
                 // let ascii = new AsciiTable();
                 // ascii.setHeading(...parameters);
