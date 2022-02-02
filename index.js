@@ -94,7 +94,7 @@ function askQuestion(questionSet) {
                 askQuestion(questionSets.welcome);  
              }
              else if (response.firstName) {
-                 console.log('name entered');
+                 console.debug('name entered');
                  queryDatabase(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${response.role}",  "${response.manager}")`);
              }
              else if (response.whatToDo) {
@@ -115,7 +115,13 @@ function askQuestion(questionSet) {
                         break;
                     }
                     case 'View All Employees' : {
-                        queryDatabase('SELECT first_name, last_name FROM employee');
+                        // queryDatabase('SELECT * FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id');
+                        queryDatabase(
+                            'SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name,  role.title AS "Job Title", department.name AS Department, role.salary AS Salary, CONCAT(manager.first_name, " ", manager.last_name) AS Manager FROM employee JOIN employee AS manager ON employee.manager_id = manager.id JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id'
+                        );
+
+                        //JOIN employee AS manager ON employee.manager_id = employee.id
+                        // queryDatabase('SELECT * FROM employee');
                         break;
                     }
                     case 'View All Departments' : {
