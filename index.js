@@ -89,51 +89,52 @@ function askQuestion(questionSet) {
     inquirer
         .prompt(questionSet)
         .then((response) => {
-            // console.log(response);
+            console.log(response);
              if (response.continue) {   
                 askQuestion(questionSets.welcome);  
              }
-             switch (response.whatToDo) {
-                 case 'Quit' : {
-                    process.exit();
-                 }
-                 case 'Add Department' : {
-                    askQuestion(questionSets.addDepartment);
-                    break;
-                 }
-                 case 'Add Role' : {
-                    askQuestion(questionSets.addRole);
-                    break;
-                 }
-                 case 'Add Employee' : {
-                    askQuestion(questionSets.addEmployee);
-                    break;
-                 }
-                 case 'View All Employees' : {
-                    // queryDatabase('employee', ['id', 'first_name', 'last_name', 'role_id']);
-                    queryDatabase('SELECT first_name, last_name FROM employee');
-                    
-                    break;
-
-                 }
-                 case 'View All Departments' : {
-                    // queryDatabase('department', ['name', 'id']);
-                    queryDatabase('SELECT name, id FROM department');
-                    break;
-                 }
-                 case 'View All Roles' : {
-                    // queryDatabase('role', ['title', 'id', 'department_id', 'salary' ]);
-                    queryDatabase('SELECT title, id, department_id, salary FROM role');
-                    break;
-                 }
-
-                 default : return response;
+             else if (response.firstName) {
+                 console.log('name entered');
+                 queryDatabase(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${response.role}",  "${response.manager}")`);
              }
+             else if (response.whatToDo) {
+                switch (response.whatToDo) {
+                    case 'Quit' : {
+                        process.exit();
+                    }
+                    case 'Add Department' : {
+                        askQuestion(questionSets.addDepartment);
+                        break;
+                    }
+                    case 'Add Role' : {
+                        askQuestion(questionSets.addRole);
+                        break;
+                    }
+                    case 'Add Employee' : {
+                        askQuestion(questionSets.addEmployee);
+                        break;
+                    }
+                    case 'View All Employees' : {
+                        queryDatabase('SELECT first_name, last_name FROM employee');
+                        break;
+                    }
+                    case 'View All Departments' : {
+                        queryDatabase('SELECT name, id FROM department');
+                        break;
+                    }
+                    case 'View All Roles' : {
+                        queryDatabase('SELECT title, id, department_id, salary FROM role');
+                        break;
+                    }
+                    default : return response;
+                }
+            }
         });
 }
 function queryDatabase (command) {
     db.query(command , function (err, results) {
         if(results) {
+
             console.table(results);
             askQuestion(questionSets.continue);
      
@@ -149,6 +150,7 @@ function queryDatabase (command) {
                 // console.log(ascii.toString());
          
         }
+        if (err) console.error(err);
     });
 }
 
