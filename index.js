@@ -115,21 +115,17 @@ function askQuestion(questionSet) {
                         break;
                     }
                     case 'View All Employees' : {
-                        // queryDatabase('SELECT * FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id');
                         queryDatabase(
-                            'SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name,  role.title AS "Job Title", department.name AS Department, role.salary AS Salary, CONCAT(manager.first_name, " ", manager.last_name) AS Manager FROM employee JOIN employee AS manager ON employee.manager_id = manager.id JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id'
+                            'SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name, role.title AS "Job Title", department.name AS Department, role.salary AS Salary, CONCAT(manager.first_name, " ", manager.last_name) AS Manager FROM employee JOIN employee AS manager ON employee.manager_id = manager.id JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id'
                         );
-
-                        //JOIN employee AS manager ON employee.manager_id = employee.id
-                        // queryDatabase('SELECT * FROM employee');
                         break;
                     }
                     case 'View All Departments' : {
-                        queryDatabase('SELECT name, id FROM department');
+                        queryDatabase('SELECT name AS Department, id FROM department');
                         break;
                     }
                     case 'View All Roles' : {
-                        queryDatabase('SELECT title, id, department_id, salary FROM role');
+                        queryDatabase('SELECT title AS Title, role.id, name AS Department, salary AS Salary FROM role JOIN department ON role.department_id = department.id');
                         break;
                     }
                     default : return response;
