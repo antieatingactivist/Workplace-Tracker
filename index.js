@@ -97,6 +97,10 @@ function askQuestion(questionSet) {
              if (response.continue) {   
                 askQuestion(questionSets.welcome);  
              }
+             else if (response.departmentName) {
+                console.debug('dept entered');
+                queryDatabase(`INSERT INTO department (name) VALUES ("${response.departmentName}")`);
+             }
              else if (response.firstName) {
                  console.debug('name entered');
                  queryDatabase(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${response.role}",  "${response.manager}")`);
@@ -173,14 +177,17 @@ function queryDatabase (command) {
 
 
 //init
-db.query('SELECT title FROM role', function (err, results) {
-    // console.log(results);
+function addDepartmentsToRolesQuestion() {
     // departmentList = [];
-    for (let i of results) {
-        departmentList.push(i.title);
-    }
-    console.log(departmentList);
-});
+    db.query('SELECT title FROM role', function (err, results) {
+        
+        for (let i of results) {
+            departmentList.push(i.title);
+        }
+        // console.log(departmentList);
+    });
+}
+addDepartmentsToRolesQuestion();
 askQuestion(questionSets.welcome);
 
 
