@@ -93,6 +93,27 @@ var questionSets = {
                 return id;
             } 
         }
+    ],
+    updateEmployeeRole : [
+        {
+            type: 'list',
+            message: 'Please select employee',
+            name: 'name',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
+        },{
+            type: 'list',
+            message: 'Please enter the employee\'s new role',
+            name: 'role',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
+        }
     ]
 };
 
@@ -145,6 +166,10 @@ function askQuestion(questionSet) {
                         askQuestion(questionSets.addEmployee);
                         break;
                     }
+                    case 'Update Employee Role' : {
+                        askQuestion(questionSets.updateEmployeeRole);
+                        break;
+                    }
                     case 'View All Employees' : {
                         queryDatabase(
                             'SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name, role.title AS "Job Title", department.name AS Department, role.salary AS Salary, CONCAT(manager.first_name, " ", manager.last_name) AS Manager FROM employee JOIN employee AS manager ON employee.manager_id = manager.id JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id'
@@ -194,7 +219,7 @@ function queryDatabase (command) {
 function updateQuestions() {
     let departmentList = [];
     let roleList = [];
-    let managerList = [];
+    let employeeList = [];
     db.query('SELECT name FROM department', function (err, results) {
         
         for (let i of results) {
@@ -209,12 +234,14 @@ function updateQuestions() {
             roleList.push(i.title);
         }
         questionSets.addEmployee[2].choices = roleList;
+        questionSets.updateEmployeeRole[1].choices = roleList;
     });
     db.query('SELECT CONCAT(first_name," ",last_name, " (id: ", id, ")") AS name FROM employee', function (err, results) {
         for (let i of results) {
-            managerList.push(i.name);
+            employeeList.push(i.name);
         }
-        questionSets.addEmployee[3].choices = managerList;
+        questionSets.addEmployee[3].choices = employeeList;
+        questionSets.updateEmployeeRole[0].choices = employeeList;
     });
 }
 updateQuestions();
