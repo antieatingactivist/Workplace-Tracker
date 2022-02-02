@@ -14,8 +14,8 @@ const db = mysql.createConnection(
     console.log(`Connected to the employee_db database.`)
 );
 
-var departmentList = [];
-const questionSets = {
+// var departmentList = [];
+var questionSets = {
     continue: [
         {
             name: "continue",
@@ -60,7 +60,7 @@ const questionSets = {
             type: 'list',
             message: 'Which department is this role located in?',
             name: 'department',
-            choices: departmentList
+            choices: []
                 
             
         }
@@ -75,13 +75,23 @@ const questionSets = {
             message: 'Please enter employee\'s last name',
             name : 'lastName'
         },{
-            type : 'input',
+            type: 'list',
             message: 'Please enter employee\'s role',
-            name : 'role'
+            name: 'role',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
         },{
-            type : 'input',
+            type: 'list',
             message: 'Please enter employee\'s manager',
-            name : 'manager'
+            name: 'manager',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
         }
     ]
 };
@@ -100,6 +110,7 @@ function askQuestion(questionSet) {
              else if (response.departmentName) {
                 console.debug('dept entered');
                 queryDatabase(`INSERT INTO department (name) VALUES ("${response.departmentName}")`);
+                
              }
              else if (response.firstName) {
                  console.debug('name entered');
@@ -108,8 +119,9 @@ function askQuestion(questionSet) {
              else if (response.roleName) {
                 console.debug('role entered');
                 console.log(response.department);
-                db.query(`SELECT department_id FROM role WHERE role.title = ?`, response.department, function (err, results) {
-                    const departmentId = results[0].department_id;
+                db.query(`SELECT id FROM department WHERE department.name = ?`, response.department, function (err, results) {
+                    const departmentId = results[0].id;
+                    // console.log(results);
                     queryDatabase(`INSERT INTO role (title, salary, department_id) VALUES ("${response.roleName}", ${response.salary}, ${departmentId})`);
                 });
                 
@@ -124,6 +136,8 @@ function askQuestion(questionSet) {
                         break;
                     }
                     case 'Add Role' : {
+            
+                        
                         askQuestion(questionSets.addRole);
                         break;
                     }
@@ -156,7 +170,7 @@ function queryDatabase (command) {
 
             console.table(results);
             // console.log(results);
-
+            updateQuestions();
             askQuestion(questionSets.continue);
      
                 // let ascii = new AsciiTable();
@@ -177,17 +191,33 @@ function queryDatabase (command) {
 
 
 //init
-function addDepartmentsToRolesQuestion() {
-    // departmentList = [];
-    db.query('SELECT title FROM role', function (err, results) {
+function updateQuestions() {
+    let departmentList = [];
+    let roleList = [];
+    let managerList = [];
+    db.query('SELECT name FROM department', function (err, results) {
         
         for (let i of results) {
-            departmentList.push(i.title);
+            departmentList.push(i.name);
         }
         // console.log(departmentList);
+        questionSets.addRole[2].choices = departmentList;
+
+    });
+    db.query('SELECT CONCAT(title, " (id: ", id, ")") AS title FROM role', function (err, results) {
+        for (let i of results) {
+            roleList.push(i.title);
+        }
+        questionSets.addEmployee[2].choices = roleList;
+    });
+    db.query('SELECT CONCAT(first_name," ",last_name, " (id: ", id, ")") AS name FROM employee', function (err, results) {
+        for (let i of results) {
+            managerList.push(i.name);
+        }
+        questionSets.addEmployee[3].choices = managerList;
     });
 }
-addDepartmentsToRolesQuestion();
+updateQuestions();
 askQuestion(questionSets.welcome);
 
 
