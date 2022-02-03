@@ -30,7 +30,8 @@ var questionSets = {
             name: 'whatToDo',
             choices: [
                 'View All Employees', 
-                'Add Employee', 
+                'Add Employee',
+                'Remove Employee', 
                 'Update Employee Role',
                 'View All Roles',
                 'Add Role',
@@ -98,6 +99,18 @@ var questionSets = {
             } 
         }
     ],
+    removeEmployee : [
+        {
+            type: 'list',
+            message: 'Please select employee to remove',
+            name: 'employeeToRemove',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
+        } 
+    ],
     updateEmployeeRole : [
         {
             type: 'list',
@@ -134,22 +147,26 @@ function askQuestion(questionSet) {
              }
              else if (response.departmentName) {
                 console.debug('dept entered');
-                queryDatabase(`INSERT INTO department (name) VALUES ("${response.departmentName}")`);
+                queryDatabase(`INSERT INTO department (name) VALUES ("${response.departmentName}")`, true);
                 
              }
              else if (response.firstName) {
                  console.debug('name entered');
-                 queryDatabase(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${response.role}",  "${response.manager}")`);
+                 queryDatabase(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${response.role}",  "${response.manager}")`, true);
              }
              else if (response.roleName) {
                 console.debug('role entered');
                 console.log(response.department);
-                queryDatabase(`INSERT INTO role (title, salary, department_id) VALUES ("${response.roleName}", ${response.salary}, ${response.department})`);
+                queryDatabase(`INSERT INTO role (title, salary, department_id) VALUES ("${response.roleName}", ${response.salary}, ${response.department})`, true);
                 
              }
              else if (response.name) {
                 console.debug('role changed');
                 queryDatabase(`UPDATE employee SET role_id = ${response.role} WHERE id = ${response.name}`, true);
+             }
+             else if (response.employeeToRemove) {
+                console.debug('employee removed');
+                queryDatabase(`DELETE FROM employee WHERE id = ${response.employeeToRemove}`, true);
              }
              else if (response.whatToDo) {
                 switch (response.whatToDo) {
@@ -168,13 +185,29 @@ function askQuestion(questionSet) {
                         askQuestion(questionSets.addEmployee);
                         break;
                     }
+                    case 'Remove Employee' : {
+                        askQuestion(questionSets.removeEmployee);
+                        break;
+                    }
                     case 'Update Employee Role' : {
                         askQuestion(questionSets.updateEmployeeRole);
                         break;
                     }
                     case 'View All Employees' : {
                         queryDatabase(
-                            'SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name, role.title AS "Job Title", department.name AS Department, role.salary AS Salary, CONCAT(manager.first_name, " ", manager.last_name) AS Manager FROM employee JOIN employee AS manager ON employee.manager_id = manager.id JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id'
+                            `SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name ,
+                            role.title AS "Job Title", 
+                            department.name AS Department, 
+                            role.salary AS Salary, 
+                            IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "NONE ASSIGNED") AS Manager 
+                            FROM employee 
+                            LEFT JOIN employee AS manager 
+                            ON employee.manager_id = manager.id 
+                            LEFT JOIN role 
+                            ON employee.role_id = role.id 
+                            LEFT JOIN department 
+                            ON role.department_id = department.id
+                            ORDER BY employee.id`
                         );
                         break;
                     }
@@ -228,6 +261,7 @@ function updateQuestions() {
         for (let i of results) {
             employeeList.push(i.name);
         }
+        questionSets.removeEmployee[0].choices = employeeList;
         questionSets.addEmployee[3].choices = employeeList;
         questionSets.updateEmployeeRole[0].choices = employeeList;
     });
