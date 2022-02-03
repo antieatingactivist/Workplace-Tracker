@@ -38,6 +38,7 @@ var questionSets = {
                 'Remove Role',
                 'View All Departments',
                 'Add Department',
+                'Remove Department',
                 'Quit'
             ]
         }
@@ -124,6 +125,18 @@ var questionSets = {
             } 
         } 
     ],
+    removeDepartment : [
+        {
+            type: 'list',
+            message: 'Please select department to remove',
+            name: 'departmentToRemove',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
+        } 
+    ],
     updateEmployeeRole : [
         {
             type: 'list',
@@ -185,6 +198,10 @@ function askQuestion(questionSet) {
                 console.debug('role removed');
                 queryDatabase(`DELETE FROM role WHERE id = ${response.roleToRemove}`, true);
              }
+             else if (response.departmentToRemove) {
+                console.debug('department removed');
+                queryDatabase(`DELETE FROM department WHERE id = ${response.departmentToRemove}`, true);
+             }
              else if (response.whatToDo) {
                 switch (response.whatToDo) {
                     case 'Quit' : {
@@ -192,6 +209,10 @@ function askQuestion(questionSet) {
                     }
                     case 'Add Department' : {
                         askQuestion(questionSets.addDepartment);
+                        break;
+                    }
+                    case 'Remove Department' : {   
+                        askQuestion(questionSets.removeDepartment);
                         break;
                     }
                     case 'Add Role' : {   
@@ -269,6 +290,7 @@ function updateQuestions() {
             departmentList.push(i.name);
         }
         questionSets.addRole[2].choices = departmentList;
+        questionSets.removeDepartment[0].choices = departmentList;
 
     });
     db.query('SELECT CONCAT(title, " (id: ", id, ")") AS title FROM role', function (err, results) {
