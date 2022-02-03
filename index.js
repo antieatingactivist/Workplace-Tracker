@@ -60,7 +60,11 @@ var questionSets = {
             type: 'list',
             message: 'Which department is this role located in?',
             name: 'department',
-            choices: []
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
                 
             
         }
@@ -140,16 +144,12 @@ function askQuestion(questionSet) {
              else if (response.roleName) {
                 console.debug('role entered');
                 console.log(response.department);
-                db.query(`SELECT id FROM department WHERE department.name = ?`, response.department, function (err, results) {
-                    const departmentId = results[0].id;
-                    // console.log(results);
-                    queryDatabase(`INSERT INTO role (title, salary, department_id) VALUES ("${response.roleName}", ${response.salary}, ${departmentId})`);
-                });
+                queryDatabase(`INSERT INTO role (title, salary, department_id) VALUES ("${response.roleName}", ${response.salary}, ${response.department})`);
                 
              }
              else if (response.name) {
                 console.debug('role changed');
-                queryDatabase(`UPDATE employee SET role_id = ${response.role} WHERE id = ${response.name}`);
+                queryDatabase(`UPDATE employee SET role_id = ${response.role} WHERE id = ${response.name}`, true);
              }
              else if (response.whatToDo) {
                 switch (response.whatToDo) {
@@ -191,26 +191,14 @@ function askQuestion(questionSet) {
             }
         });
 }
-function queryDatabase (command) {
+function queryDatabase (command, hideOutput) {
     db.query(command , function (err, results) {
         if(results) {
 
-            console.table(results);
+            if (!hideOutput) console.table(results);
             // console.log(results);
             updateQuestions();
             askQuestion(questionSets.continue);
-     
-                // let ascii = new AsciiTable();
-                // ascii.setHeading(...parameters);
-                // for (let i of results) {
-                //     let row = [];
-                //     for (let j of parameters) {
-                //         row.push(i[j]);
-                //     }
-                //     ascii.addRow(...row);
-                // }
-                // console.log(ascii.toString());
-         
         }
         if (err) console.error(err);
     });
@@ -222,12 +210,10 @@ function updateQuestions() {
     let departmentList = [];
     let roleList = [];
     let employeeList = [];
-    db.query('SELECT name FROM department', function (err, results) {
-        
+    db.query('SELECT CONCAT(name, " (id: ", id, ")") AS name FROM department', function (err, results) {  
         for (let i of results) {
             departmentList.push(i.name);
         }
-        // console.log(departmentList);
         questionSets.addRole[2].choices = departmentList;
 
     });
