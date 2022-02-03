@@ -35,6 +35,7 @@ var questionSets = {
                 'Update Employee Role',
                 'View All Roles',
                 'Add Role',
+                'Remove Role',
                 'View All Departments',
                 'Add Department',
                 'Quit'
@@ -111,6 +112,18 @@ var questionSets = {
             } 
         } 
     ],
+    removeRole : [
+        {
+            type: 'list',
+            message: 'Please select role to remove',
+            name: 'roleToRemove',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
+        } 
+    ],
     updateEmployeeRole : [
         {
             type: 'list',
@@ -168,6 +181,10 @@ function askQuestion(questionSet) {
                 console.debug('employee removed');
                 queryDatabase(`DELETE FROM employee WHERE id = ${response.employeeToRemove}`, true);
              }
+             else if (response.roleToRemove) {
+                console.debug('role removed');
+                queryDatabase(`DELETE FROM role WHERE id = ${response.roleToRemove}`, true);
+             }
              else if (response.whatToDo) {
                 switch (response.whatToDo) {
                     case 'Quit' : {
@@ -179,6 +196,10 @@ function askQuestion(questionSet) {
                     }
                     case 'Add Role' : {   
                         askQuestion(questionSets.addRole);
+                        break;
+                    }
+                    case 'Remove Role' : {   
+                        askQuestion(questionSets.removeRole);
                         break;
                     }
                     case 'Add Employee' : {
@@ -196,10 +217,10 @@ function askQuestion(questionSet) {
                     case 'View All Employees' : {
                         queryDatabase(
                             `SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name ,
-                            role.title AS "Job Title", 
-                            department.name AS Department, 
-                            role.salary AS Salary, 
-                            IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "NONE ASSIGNED") AS Manager 
+                            IFNULL(role.title, "*none assigned*") AS "Job Title", 
+                            IFNULL(department.name, "*none assigned*") AS Department, 
+                            IFNULL(role.salary, "*.**") AS Salary, 
+                            IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "*none assigned*") AS Manager 
                             FROM employee 
                             LEFT JOIN employee AS manager 
                             ON employee.manager_id = manager.id 
@@ -256,6 +277,7 @@ function updateQuestions() {
         }
         questionSets.addEmployee[2].choices = roleList;
         questionSets.updateEmployeeRole[1].choices = roleList;
+        questionSets.removeRole[0].choices = roleList;
     });
     db.query('SELECT CONCAT(first_name," ",last_name, " (id: ", id, ")") AS name FROM employee', function (err, results) {
         for (let i of results) {
