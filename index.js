@@ -35,6 +35,7 @@ var questionSets = {
                 'Add Employee',
                 'Remove Employee', 
                 'Update Employee Role',
+                'Update Employee Manager',
                 'View All Roles',
                 'Add Role',
                 'Remove Role',
@@ -183,6 +184,27 @@ var questionSets = {
                 return id;
             } 
         }
+    ],
+    updateEmployeeManager : [
+        {
+            type: 'list',
+            message: 'Please select employee',
+            name: 'name',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
+        },{
+            type: 'list',
+            message: 'Please enter the employee\'s new manager',
+            name: 'manager',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
+        }
     ]
 };
 
@@ -246,9 +268,13 @@ function askQuestion(questionSet) {
                 queryDatabase(`INSERT INTO role (title, salary, department_id) VALUES ("${response.roleName}", ${response.salary}, ${response.department})`, true);
                 
              }
-             else if (response.name) {
+             else if (response.role) {
                 console.debug('role changed');
                 queryDatabase(`UPDATE employee SET role_id = ${response.role} WHERE id = ${response.name}`, true);
+             }
+             else if (response.manager) {
+                console.debug('manager changed');
+                queryDatabase(`UPDATE employee SET manager_id = ${response.manager} WHERE id = ${response.name}`, true);
              }
              else if (response.employeeToRemove) {
                 console.debug('employee removed');
@@ -293,6 +319,10 @@ function askQuestion(questionSet) {
                     }
                     case 'Update Employee Role' : {
                         askQuestion(questionSets.updateEmployeeRole);
+                        break;
+                    }
+                    case 'Update Employee Manager' : {
+                        askQuestion(questionSets.updateEmployeeManager);
                         break;
                     }
                     case 'View Employees by Department' : {
@@ -377,6 +407,8 @@ function updateQuestions() {
         questionSets.removeEmployee[0].choices = employeeList;
         questionSets.addEmployee[3].choices = employeeList;
         questionSets.updateEmployeeRole[0].choices = employeeList;
+        questionSets.updateEmployeeManager[0].choices = employeeList;
+        questionSets.updateEmployeeManager[1].choices = employeeList;
         questionSets.viewEmployeeByManager[0].choices = employeeList;
     });
 }
