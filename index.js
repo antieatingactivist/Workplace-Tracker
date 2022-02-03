@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+// const cTable = require('console.table');
 // var AsciiTable = require('ascii-table');
 
 
@@ -14,7 +15,6 @@ const db = mysql.createConnection(
     console.log(`Connected to the employee_db database.`)
 );
 
-// var departmentList = [];
 var questionSets = {
     continue: [
         {
@@ -147,6 +147,10 @@ function askQuestion(questionSet) {
                 });
                 
              }
+             else if (response.name) {
+                console.debug('role changed');
+                queryDatabase(`UPDATE employee SET role_id = ${response.role} WHERE id = ${response.name}`);
+             }
              else if (response.whatToDo) {
                 switch (response.whatToDo) {
                     case 'Quit' : {
@@ -156,9 +160,7 @@ function askQuestion(questionSet) {
                         askQuestion(questionSets.addDepartment);
                         break;
                     }
-                    case 'Add Role' : {
-            
-                        
+                    case 'Add Role' : {   
                         askQuestion(questionSets.addRole);
                         break;
                     }
