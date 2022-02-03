@@ -40,6 +40,7 @@ var questionSets = {
                 'Add Role',
                 'Remove Role',
                 'View All Departments',
+                'View Department Budget',
                 'Add Department',
                 'Remove Department',
                 'Quit'
@@ -164,6 +165,18 @@ var questionSets = {
             } 
         } 
     ],
+    viewDepartmentBudget : [
+        {
+            type: 'list',
+            message: 'Please select department to view budget',
+            name: 'budget',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
+        } 
+    ],
     updateEmployeeRole : [
         {
             type: 'list',
@@ -251,6 +264,19 @@ function askQuestion(questionSet) {
                                 LEFT JOIN department 
                                 ON role.department_id = department.id
                                 WHERE department.id = ${response.departmentToView}
+                                ORDER BY employee.id`);
+             }
+             else if (response.budget) {
+                console.debug('dept budget');
+                queryDatabase(`SELECT SUM(salary) as "Total Budget"            
+                                FROM employee 
+                                LEFT JOIN employee AS manager 
+                                ON employee.manager_id = manager.id 
+                                LEFT JOIN role 
+                                ON employee.role_id = role.id 
+                                LEFT JOIN department 
+                                ON role.department_id = department.id
+                                WHERE department.id = ${response.budget}
                                 ORDER BY employee.id`);
              }
              else if (response.departmentName) {
@@ -355,6 +381,10 @@ function askQuestion(questionSet) {
                         queryDatabase('SELECT name AS Department, id FROM department');
                         break;
                     }
+                    case 'View Department Budget' : {
+                        askQuestion(questionSets.viewDepartmentBudget);
+                        break;
+                    }
                     case 'View All Roles' : {
                         queryDatabase('SELECT title AS Title, role.id, name AS Department, salary AS Salary FROM role JOIN department ON role.department_id = department.id');
                         break;
@@ -390,6 +420,7 @@ function updateQuestions() {
         questionSets.addRole[2].choices = departmentList;
         questionSets.removeDepartment[0].choices = departmentList;
         questionSets.viewEmployeeByDepartment[0].choices = departmentList;
+        questionSets.viewDepartmentBudget[0].choices = departmentList;
 
     });
     db.query('SELECT CONCAT(title, " (id: ", id, ")") AS title FROM role', function (err, results) {
