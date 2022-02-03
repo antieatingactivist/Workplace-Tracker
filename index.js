@@ -31,6 +31,7 @@ var questionSets = {
             choices: [
                 'View All Employees',
                 'View Employees by Department',
+                'View Employees by Manager',
                 'Add Employee',
                 'Remove Employee', 
                 'Update Employee Role',
@@ -114,6 +115,18 @@ var questionSets = {
             } 
         } 
     ],
+    viewEmployeeByManager : [
+        {
+            type: 'list',
+            message: 'Please select manager whose subordiates you would like to view',
+            name: 'managerToView',
+            choices: [],
+            filter(answer) {
+                const id = answer.match(/[1-9]/g).join('');
+                return id;
+            } 
+        } 
+    ],
     removeEmployee : [
         {
             type: 'list',
@@ -183,6 +196,23 @@ function askQuestion(questionSet) {
             console.log(response);
              if (response.continue) {   
                 askQuestion(questionSets.welcome);  
+             }
+             else if (response.managerToView) {
+                console.debug('dept viewed');
+                queryDatabase(`SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name ,
+                                IFNULL(role.title, "*none assigned*") AS "Job Title", 
+                                IFNULL(department.name, "*none assigned*") AS Department, 
+                                IFNULL(role.salary, "*.**") AS Salary, 
+                                IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "*none assigned*") AS Manager 
+                                FROM employee 
+                                LEFT JOIN employee AS manager 
+                                ON employee.manager_id = manager.id 
+                                LEFT JOIN role 
+                                ON employee.role_id = role.id 
+                                LEFT JOIN department 
+                                ON role.department_id = department.id
+                                WHERE manager.id = ${response.managerToView}
+                                ORDER BY employee.id`);
              }
              else if (response.departmentToView) {
                 console.debug('dept viewed');
@@ -269,6 +299,10 @@ function askQuestion(questionSet) {
                         askQuestion(questionSets.viewEmployeeByDepartment);
                         break;
                     }
+                    case 'View Employees by Manager' : {
+                        askQuestion(questionSets.viewEmployeeByManager);
+                        break;
+                    }
                     case 'View All Employees' : {
                         queryDatabase(
                             `SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name ,
@@ -343,6 +377,7 @@ function updateQuestions() {
         questionSets.removeEmployee[0].choices = employeeList;
         questionSets.addEmployee[3].choices = employeeList;
         questionSets.updateEmployeeRole[0].choices = employeeList;
+        questionSets.viewEmployeeByManager[0].choices = employeeList;
     });
 }
 updateQuestions();
