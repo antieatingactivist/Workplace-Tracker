@@ -5,15 +5,26 @@
 
 This is an app for keeping track of Employees, Job Titles, Departments, and Salaries at your business. It uses an elegant command line interface using node.js and inquirer. Data is stored using a mySQL database.
 
+
+
 ##
 
-- .
+- Inquirer is used for interactivity.
 
-` `
-- .
+```
+function askQuestion(questionSet) {  //questionSet located in ./public/questions.js
+    console.log('\n');
+    inquirer
+        .prompt(questionSet)
+        .then((response) => {
+```
+- mySQL queries are used to retrieve data from the database.
 
-` `
+```
+SELECT CONCAT(first_name," ",last_name, " (id: ", id, ")") AS name FROM employee
+```
 
+## [Watch the demo video](https://antieatingactivist.github.io/Workplace-Tracker/)
 
 ![Screen Recording 2022-02-03 at 8 04 55 PM](https://user-images.githubusercontent.com/1414728/152470117-14dfcfe1-9122-4388-b98c-884fb0843abb.gif)
 
