@@ -70,7 +70,7 @@ function askQuestion(questionSet) {  //questionSet located in ./public/questions
              else if (response.role) {
                 // console.debug('role changed');
                 queryDatabase(`UPDATE employee SET role_id = ${response.role} WHERE id = ${response.name}`, null, true);
-                console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`\nRole Removed.`);
+                console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`\nRole Changed.`);
              }
              else if (response.manager) {
                 // console.debug('manager changed');
