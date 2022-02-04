@@ -1,9 +1,9 @@
 const queryStrings = {
     viewManager: `SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name ,
-                    IFNULL(role.title, "*none assigned*") AS "Job Title", 
-                    IFNULL(department.name, "*none assigned*") AS Department, 
+                    IFNULL(role.title, "* none assigned *") AS "Job Title", 
+                    IFNULL(department.name, "* none assigned *") AS Department, 
                     CONCAT("$", IFNULL(role.salary, "*.**")) AS Salary, 
-                    IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "*none assigned*") AS Manager 
+                    IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "* none assigned *") AS Manager 
                     FROM employee 
                     LEFT JOIN employee AS manager 
                     ON employee.manager_id = manager.id 
@@ -15,10 +15,10 @@ const queryStrings = {
                     ORDER BY employee.id`,
 
     viewDepartment: `SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name ,
-                    IFNULL(role.title, "*none assigned*") AS "Job Title", 
-                    IFNULL(department.name, "*none assigned*") AS Department, 
+                    IFNULL(role.title, "* none assigned *") AS "Job Title", 
+                    IFNULL(department.name, "* none assigned *") AS Department, 
                     CONCAT("$", IFNULL(role.salary, "*.**")) AS Salary, 
-                    IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "*none assigned*") AS Manager 
+                    IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "* none assigned *") AS Manager 
                     FROM employee 
                     LEFT JOIN employee AS manager 
                     ON employee.manager_id = manager.id 
@@ -29,7 +29,7 @@ const queryStrings = {
                     WHERE department.id = ?
                     ORDER BY employee.id`,
 
-    viewBudget: `SELECT SUM(salary) as "Total Budget"            
+    viewBudget: `SELECT IFNULL(SUM(salary), "$0.00") as "Total Utilized Budget"            
                     FROM employee 
                     LEFT JOIN employee AS manager 
                     ON employee.manager_id = manager.id 
@@ -41,10 +41,10 @@ const queryStrings = {
                     ORDER BY employee.id`,
 
     viewAllEmployees: `SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name ,
-                    IFNULL(role.title, "*none assigned*") AS "Job Title", 
-                    IFNULL(department.name, "*none assigned*") AS Department, 
+                    IFNULL(role.title, "* none assigned *") AS "Job Title", 
+                    IFNULL(department.name, "* none assigned *") AS Department, 
                     CONCAT("$", IFNULL(role.salary, "*.**")) AS Salary,  
-                    IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "*none assigned*") AS Manager 
+                    IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "* none assigned *") AS Manager 
                     FROM employee 
                     LEFT JOIN employee AS manager 
                     ON employee.manager_id = manager.id 

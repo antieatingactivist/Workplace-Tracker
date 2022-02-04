@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 const questionSets = require('./public/questions');
 const queryStrings = require('./public/queryStrings');
 const cTable = require('console.table');
-console.log(` _    _            _          _                
+console.log("\x1b[1m\x1b[36;1m%s\x1b[0m", ` _    _            _          _                
 | |  | |          | |        | |               
 | |  | | ___  _ __| | ___ __ | | __ _  ___ ___ 
 | |/\\| |/ _ \\| '__| |/ | '_ \\| |/ _\` |/ __/ _ \\
@@ -25,7 +25,7 @@ const db = mysql.createConnection(
       database: 'employee_db'
     },
     
-    console.log(`Connected to the employee_db database.`)
+    console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`Connected to the employee_db database.`)
 );
 
 function askQuestion(questionSet) {  //questionSet located in ./public/questions.js
@@ -138,7 +138,7 @@ function askQuestion(questionSet) {  //questionSet located in ./public/questions
                         queryDatabase('SELECT name AS Department, id FROM department');
                         break;
                     }
-                    case 'View Department Budget' : {
+                    case 'View Department Total Utilized Budget' : {
                         askQuestion(questionSets.viewDepartmentBudget);
                         break;
                     }

@@ -23,7 +23,7 @@ var questionSets = {
                 'Add Role',
                 'Remove Role',
                 'View All Departments',
-                'View Department Budget',
+                'View Department Total Utilized Budget',
                 'Add Department',
                 'Remove Department',
                 'Quit'
@@ -159,7 +159,7 @@ var questionSets = {
     viewDepartmentBudget : [
         {
             type: 'list',
-            message: 'Please select department to view budget',
+            message: 'Please select department to view total utilized budget',
             name: 'budget',
             choices: [],
             filter(answer) {
