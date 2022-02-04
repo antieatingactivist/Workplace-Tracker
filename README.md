@@ -9,12 +9,20 @@ This is an app for keeping track of Employees, Job Titles, Departments, and Sala
 
 ##
 
-- .
+- Inquirer is used for interactivity.
 
-` `
-- .
+```
+function askQuestion(questionSet) {  //questionSet located in ./public/questions.js
+    console.log('\n');
+    inquirer
+        .prompt(questionSet)
+        .then((response) => {
+```
+- mySQL queries are used to retrieve data from the database.
 
-` `
+```
+SELECT CONCAT(first_name," ",last_name, " (id: ", id, ")") AS name FROM employee
+```
 
 ## [Watch the demo video](https://antieatingactivist.github.io/Workplace-Tracker/)
 
