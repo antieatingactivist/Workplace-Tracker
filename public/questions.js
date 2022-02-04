@@ -52,8 +52,9 @@ var questionSets = {
             name: 'department',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
             } 
                 
             
@@ -74,18 +75,20 @@ var questionSets = {
             name: 'role',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
-            } 
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
+            }
         },{
             type: 'list',
             message: 'Please enter employee\'s manager',
             name: 'manager',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
-            } 
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
+            }
         }
     ],
     viewEmployeeByDepartment : [
@@ -95,9 +98,10 @@ var questionSets = {
             name: 'departmentToView',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
-            } 
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
+            }
         } 
     ],
     viewEmployeeByManager : [
@@ -107,8 +111,9 @@ var questionSets = {
             name: 'managerToView',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
             } 
         } 
     ],
@@ -119,8 +124,9 @@ var questionSets = {
             name: 'employeeToRemove',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
             } 
         } 
     ],
@@ -131,9 +137,10 @@ var questionSets = {
             name: 'roleToRemove',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
-            } 
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
+            }
         } 
     ],
     removeDepartment : [
@@ -143,9 +150,10 @@ var questionSets = {
             name: 'departmentToRemove',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
-            } 
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
+            }
         } 
     ],
     viewDepartmentBudget : [
@@ -155,8 +163,9 @@ var questionSets = {
             name: 'budget',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
             } 
         } 
     ],
@@ -167,8 +176,9 @@ var questionSets = {
             name: 'name',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
             } 
         },{
             type: 'list',
@@ -176,8 +186,9 @@ var questionSets = {
             name: 'role',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
             } 
         }
     ],
@@ -188,8 +199,9 @@ var questionSets = {
             name: 'name',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
             } 
         },{
             type: 'list',
@@ -197,8 +209,9 @@ var questionSets = {
             name: 'manager',
             choices: [],
             filter(answer) {
-                const id = answer.match(/[1-9]/g).join('');
-                return id;
+                
+                if (answer !== "cancel") return answer.match(/[1-9]/g).join('');
+                else return answer;
             } 
         }
     ]

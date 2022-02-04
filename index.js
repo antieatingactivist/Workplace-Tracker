@@ -3,7 +3,19 @@ const mysql = require('mysql2');
 const questionSets = require('./public/questions');
 const queryStrings = require('./public/queryStrings');
 const cTable = require('console.table');
-
+console.log(` _    _            _          _                
+| |  | |          | |        | |               
+| |  | | ___  _ __| | ___ __ | | __ _  ___ ___ 
+| |/\\| |/ _ \\| '__| |/ | '_ \\| |/ _\` |/ __/ _ \\
+\\  /\\  | (_) | |  |   <| |_) | | (_| | (_|  __/
+ \\/  \\/ \\___/|_|  |_|\\_| .__/|_|\\__,_|\\___\\___|
+ _____              _  | |                     
+|_   _|            | | |_|                     
+  | |_ __ __ _  ___| | _____ _ __              
+  | | '__/ _\` |/ __| |/ / _ | '__|             
+  | | | | (_| | (__|   |  __| |                
+  \\_|_|  \\__,_|\\___|_|\\_\\___|_|                
+                                    `);
 const db = mysql.createConnection(
     {
       host: 'localhost',
@@ -12,6 +24,7 @@ const db = mysql.createConnection(
       password: 'password',
       database: 'employee_db'
     },
+    
     console.log(`Connected to the employee_db database.`)
 );
 
@@ -20,7 +33,7 @@ function askQuestion(questionSet) {  //questionSet located in ./public/questions
     inquirer
         .prompt(questionSet)
         .then((response) => {
-            // console.log(response);
+            console.log(response);
              if (response.continue !== undefined) {   
                
                 askQuestion(questionSets.welcome);  
