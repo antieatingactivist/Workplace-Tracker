@@ -33,7 +33,7 @@ function askQuestion(questionSet) {  //questionSet located in ./public/questions
     inquirer
         .prompt(questionSet)
         .then((response) => {
-            console.log(response);
+            // console.log(response);
              if (response.continue !== undefined) {   
                
                 askQuestion(questionSets.welcome);  
@@ -53,37 +53,44 @@ function askQuestion(questionSet) {  //questionSet located in ./public/questions
              else if (response.departmentName) {
                 // console.debug('dept entered');
                 queryDatabase(`INSERT INTO department (name) VALUES ("${response.departmentName}")`,null, true);
-                
+                console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`\nAdded ${response.departmentName} department to the database.`);
              }
              else if (response.firstName) {
                 //  console.debug('name entered');
                  queryDatabase(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${response.role}",  "${response.manager}")`, null, true);
+                 console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`\nAdded ${response.firstName} ${response.lastName} to the database.`);
              }
              else if (response.roleName) {
                 // console.debug('role entered');
                 // console.log(response.department);
                 queryDatabase(`INSERT INTO role (title, salary, department_id) VALUES ("${response.roleName}", ${response.salary}, ${response.department})`,null, true);
+                console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`\nAdded ${response.roleName} role to the database.`);
                 
              }
              else if (response.role) {
                 // console.debug('role changed');
                 queryDatabase(`UPDATE employee SET role_id = ${response.role} WHERE id = ${response.name}`, null, true);
+                console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`\nRole Removed.`);
              }
              else if (response.manager) {
                 // console.debug('manager changed');
                 queryDatabase(`UPDATE employee SET manager_id = ${response.manager} WHERE id = ${response.name}`, null, true);
+                console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`\nManager Changed.`);
              }
              else if (response.employeeToRemove) {
                 // console.debug('employee removed');
                 queryDatabase(`DELETE FROM employee WHERE id = ${response.employeeToRemove}`, null, true);
+                console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`\nEmployee Removed.`);
              }
              else if (response.roleToRemove) {
                 // console.debug('role removed');
                 queryDatabase(`DELETE FROM role WHERE id = ${response.roleToRemove}`, null, true);
+                console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`\nRole Removed.`);
              }
              else if (response.departmentToRemove) {
                 // console.debug('department removed');
                 queryDatabase(`DELETE FROM department WHERE id = ${response.departmentToRemove}`, null, true);
+                console.log("\x1b[1m\x1b[32;1m%s\x1b[0m",`\nDepartment Removed.`);
              }
              else if (response.whatToDo) {
                 switch (response.whatToDo) {
