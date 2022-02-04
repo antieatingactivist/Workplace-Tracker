@@ -15,6 +15,9 @@ This is an app for keeping track of Employees, Job Titles, Departments, and Sala
 ` `
 
 
+![Screen Recording 2022-02-03 at 8 04 55 PM](https://user-images.githubusercontent.com/1414728/152470117-14dfcfe1-9122-4388-b98c-884fb0843abb.gif)
+
+
 ## Installation
 
 node.js and mySQL are required to run this application. mySQL username "root" and password "password" are used. You will have to modify the credentials in index.js if you wish to use a different username or password. 
