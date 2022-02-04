@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "ascii-table": "^0.0.9",
     "console.table": "^0.10.0",
     "inquirer": "^8.2.0",
     "mysql2": "^2.3.3"
@@ -10,7 +9,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "schema": "mysql -u root -p < ./db/schema.sql",
+    "seed": "mysql -u root -p < ./db/seeds.sql"
   },
   "repository": {
     "type": "git",

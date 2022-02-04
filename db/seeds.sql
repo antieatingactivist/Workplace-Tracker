@@ -1,3 +1,5 @@
+USE employee_db;
+
 INSERT INTO department (id, name)
 VALUES  (1, "Command"),
         (2, "Science"),

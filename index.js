@@ -1,9 +1,9 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const questionSets = require('./public/questions');
-// const cTable = require('console.table');
-// var AsciiTable = require('ascii-table');
-console.log(questionSets);
+const queryStrings = require('./public/queryStrings');
+const cTable = require('console.table');
+
 const db = mysql.createConnection(
     {
       host: 'localhost',
@@ -20,91 +20,57 @@ function askQuestion(questionSet) {  //questionSet located in ./public/questions
     inquirer
         .prompt(questionSet)
         .then((response) => {
-            console.log(response);
-             if (response.continue) {   
+            // console.log(response);
+             if (response.continue !== undefined) {   
+               
                 askQuestion(questionSets.welcome);  
              }
-             else if (response.managerToView) {
-                console.debug('dept viewed');
-                queryDatabase(`SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name ,
-                                IFNULL(role.title, "*none assigned*") AS "Job Title", 
-                                IFNULL(department.name, "*none assigned*") AS Department, 
-                                IFNULL(role.salary, "*.**") AS Salary, 
-                                IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "*none assigned*") AS Manager 
-                                FROM employee 
-                                LEFT JOIN employee AS manager 
-                                ON employee.manager_id = manager.id 
-                                LEFT JOIN role 
-                                ON employee.role_id = role.id 
-                                LEFT JOIN department 
-                                ON role.department_id = department.id
-                                WHERE manager.id = ${response.managerToView}
-                                ORDER BY employee.id`);
+            else if (response.managerToView) {
+                // console.debug('dept viewed');
+                queryDatabase(queryStrings.viewManager, response.managerToView);
              }
              else if (response.departmentToView) {
-                console.debug('dept viewed');
-                queryDatabase(`SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name ,
-                                IFNULL(role.title, "*none assigned*") AS "Job Title", 
-                                IFNULL(department.name, "*none assigned*") AS Department, 
-                                IFNULL(role.salary, "*.**") AS Salary, 
-                                IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "*none assigned*") AS Manager 
-                                FROM employee 
-                                LEFT JOIN employee AS manager 
-                                ON employee.manager_id = manager.id 
-                                LEFT JOIN role 
-                                ON employee.role_id = role.id 
-                                LEFT JOIN department 
-                                ON role.department_id = department.id
-                                WHERE department.id = ${response.departmentToView}
-                                ORDER BY employee.id`);
+                // console.debug('dept viewed');
+                queryDatabase(queryStrings.viewDepartment, response.departmentToView);
              }
              else if (response.budget) {
-                console.debug('dept budget');
-                queryDatabase(`SELECT SUM(salary) as "Total Budget"            
-                                FROM employee 
-                                LEFT JOIN employee AS manager 
-                                ON employee.manager_id = manager.id 
-                                LEFT JOIN role 
-                                ON employee.role_id = role.id 
-                                LEFT JOIN department 
-                                ON role.department_id = department.id
-                                WHERE department.id = ${response.budget}
-                                ORDER BY employee.id`);
+                // console.debug('dept budget');
+                queryDatabase(queryStrings.viewBudget, response.budget);
              }
              else if (response.departmentName) {
-                console.debug('dept entered');
-                queryDatabase(`INSERT INTO department (name) VALUES ("${response.departmentName}")`, true);
+                // console.debug('dept entered');
+                queryDatabase(`INSERT INTO department (name) VALUES ("${response.departmentName}")`,null, true);
                 
              }
              else if (response.firstName) {
-                 console.debug('name entered');
-                 queryDatabase(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${response.role}",  "${response.manager}")`, true);
+                //  console.debug('name entered');
+                 queryDatabase(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${response.role}",  "${response.manager}")`, null, true);
              }
              else if (response.roleName) {
-                console.debug('role entered');
-                console.log(response.department);
-                queryDatabase(`INSERT INTO role (title, salary, department_id) VALUES ("${response.roleName}", ${response.salary}, ${response.department})`, true);
+                // console.debug('role entered');
+                // console.log(response.department);
+                queryDatabase(`INSERT INTO role (title, salary, department_id) VALUES ("${response.roleName}", ${response.salary}, ${response.department})`,null, true);
                 
              }
              else if (response.role) {
-                console.debug('role changed');
-                queryDatabase(`UPDATE employee SET role_id = ${response.role} WHERE id = ${response.name}`, true);
+                // console.debug('role changed');
+                queryDatabase(`UPDATE employee SET role_id = ${response.role} WHERE id = ${response.name}`, null, true);
              }
              else if (response.manager) {
-                console.debug('manager changed');
-                queryDatabase(`UPDATE employee SET manager_id = ${response.manager} WHERE id = ${response.name}`, true);
+                // console.debug('manager changed');
+                queryDatabase(`UPDATE employee SET manager_id = ${response.manager} WHERE id = ${response.name}`, null, true);
              }
              else if (response.employeeToRemove) {
-                console.debug('employee removed');
-                queryDatabase(`DELETE FROM employee WHERE id = ${response.employeeToRemove}`, true);
+                // console.debug('employee removed');
+                queryDatabase(`DELETE FROM employee WHERE id = ${response.employeeToRemove}`, null, true);
              }
              else if (response.roleToRemove) {
-                console.debug('role removed');
-                queryDatabase(`DELETE FROM role WHERE id = ${response.roleToRemove}`, true);
+                // console.debug('role removed');
+                queryDatabase(`DELETE FROM role WHERE id = ${response.roleToRemove}`, null, true);
              }
              else if (response.departmentToRemove) {
-                console.debug('department removed');
-                queryDatabase(`DELETE FROM department WHERE id = ${response.departmentToRemove}`, true);
+                // console.debug('department removed');
+                queryDatabase(`DELETE FROM department WHERE id = ${response.departmentToRemove}`, null, true);
              }
              else if (response.whatToDo) {
                 switch (response.whatToDo) {
@@ -152,21 +118,7 @@ function askQuestion(questionSet) {  //questionSet located in ./public/questions
                         break;
                     }
                     case 'View All Employees' : {
-                        queryDatabase(
-                            `SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS Name ,
-                            IFNULL(role.title, "*none assigned*") AS "Job Title", 
-                            IFNULL(department.name, "*none assigned*") AS Department, 
-                            IFNULL(role.salary, "*.**") AS Salary, 
-                            IFNULL(CONCAT(manager.first_name, " ", manager.last_name), "*none assigned*") AS Manager 
-                            FROM employee 
-                            LEFT JOIN employee AS manager 
-                            ON employee.manager_id = manager.id 
-                            LEFT JOIN role 
-                            ON employee.role_id = role.id 
-                            LEFT JOIN department 
-                            ON role.department_id = department.id
-                            ORDER BY employee.id`
-                        );
+                        queryDatabase(queryStrings.viewAllEmployees);
                         break;
                     }
                     case 'View All Departments' : {
@@ -178,7 +130,7 @@ function askQuestion(questionSet) {  //questionSet located in ./public/questions
                         break;
                     }
                     case 'View All Roles' : {
-                        queryDatabase('SELECT title AS Title, role.id, name AS Department, salary AS Salary FROM role JOIN department ON role.department_id = department.id');
+                        queryDatabase(queryStrings.viewAllRoles);
                         break;
                     }
                     default : return response;
@@ -186,12 +138,11 @@ function askQuestion(questionSet) {  //questionSet located in ./public/questions
             }
         });
 }
-function queryDatabase (command, hideOutput) {
-    db.query(command , function (err, results) {
+function queryDatabase (command, parameter, hideOutput) {
+    db.query(command, parameter, function (err, results) {
         if(results) {
-
-            if (!hideOutput) console.table(results);
-            // console.log(results);
+ 
+            if (!hideOutput) console.table('\n',results);
             updateQuestions();
             askQuestion(questionSets.continue);
         }
@@ -199,8 +150,6 @@ function queryDatabase (command, hideOutput) {
     });
 }
 
-
-//init
 function updateQuestions() {
     let departmentList = [];
     let roleList = [];
@@ -235,6 +184,9 @@ function updateQuestions() {
         questionSets.viewEmployeeByManager[0].choices = employeeList;
     });
 }
+
+//init
+
 updateQuestions();
 askQuestion(questionSets.welcome);
 
